@@ -31,14 +31,11 @@ protected section.
     redefinition .
 private section.
   DATA: ms_authorization_code TYPE string,
-        ms_redirect_url TYPE string,
         ms_aad_token TYPE string,
         ms_client_id TYPE string,
         ms_user_id TYPE string.
 
   methods GET_AAD_TOKEN
-    importing
-      !IV_REDIRECT_URL type STRING
     returning
       value(RS_TOKEN) type STRING
     raising
@@ -78,15 +75,11 @@ CLASS ZCL_GRCAUD_MS_REPOSITORY IMPLEMENTATION.
                                                      EXPORTING iv_name = if_grcaud_file_repository=>sc_config_name-name
                                                                iv_id   = 'ZMS' ).
 
-    ms_redirect_url = ''.
     ms_client_id = ''.
     ms_user_id = ''.
 
     TRY.
-        ms_aad_token = GET_AAD_TOKEN(
-            EXPORTING
-                iv_redirect_url = ms_redirect_url
-        ).
+        ms_aad_token = GET_AAD_TOKEN( ).
 
         CATCH cx_static_check INTO DATA(cx_static_check).
             DATA(lv_text) = cx_static_check->get_text(  ).
@@ -126,7 +119,6 @@ CLASS ZCL_GRCAUD_MS_REPOSITORY IMPLEMENTATION.
     oref_aad_token->get_aad_token(
       EXPORTING
         iv_client_id = ms_client_id " Input client id as per implementation guide for AAD
-        iv_redirect_uri = iv_redirect_url "lv_resource
       IMPORTING
         ev_aad_token = rs_token
         ev_response = DATA(lv_response)
